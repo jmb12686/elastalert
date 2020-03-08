@@ -1,4 +1,4 @@
-FROM alpine:latest as py-ea
+FROM alpine:3.11 as py-ea
 ARG ELASTALERT_VERSION=1334b611fdd7adf39991a1b0b11689568d612690
 ENV ELASTALERT_VERSION=${ELASTALERT_VERSION}
 # URL from which to download Elastalert.
@@ -9,7 +9,7 @@ ENV ELASTALERT_HOME /opt/elastalert
 
 WORKDIR /opt
 
-RUN apk add --update --no-cache ca-certificates openssl-dev openssl python3-dev python3 py3-pip py3-yaml libffi-dev gcc musl-dev wget && \
+RUN apk add --update --no-cache ca-certificates openssl-dev openssl python3-dev==3.8.2-r0 python3==3.8.2-r0 py3-pip py3-yaml libffi-dev gcc musl-dev wget && \
 # Download and unpack Elastalert.
     wget -O elastalert.zip "${ELASTALERT_URL}" && \
     unzip elastalert.zip && \
@@ -22,12 +22,12 @@ WORKDIR "${ELASTALERT_HOME}"
 # With the latest hash we no longer need to monkey with package versions
 RUN python3 setup.py install
 
-FROM node:alpine
+FROM node:alpine3.11
 LABEL maintainer="John Belisle <jmb186@gmail.com>"
 # Set timezone for this container
 ENV TZ America/New_York
 
-RUN apk add --update --no-cache curl tzdata python3 make libmagic && \
+RUN apk add --update --no-cache curl tzdata python3==3.8.2-r0 make libmagic && \
     ln -s /usr/bin/python3 /usr/bin/python
 COPY --from=py-ea /usr/lib/python3.8/site-packages /usr/lib/python3.8/site-packages
 COPY --from=py-ea /opt/elastalert /opt/elastalert
