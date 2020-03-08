@@ -22,7 +22,7 @@ WORKDIR "${ELASTALERT_HOME}"
 # With the latest hash we no longer need to monkey with package versions
 RUN python3 setup.py install
 
-FROM node:alpine3.11
+FROM node:alpine3.10
 LABEL maintainer="John Belisle <jmb186@gmail.com>"
 # Set timezone for this container
 ENV TZ America/New_York
